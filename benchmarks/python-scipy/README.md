@@ -1,6 +1,7 @@
 ## Benchmark Results
 
-$n\times n$ matrices
+Benchmarking was performed on $n \times n$ matrices using 64-bit floating-point precision (numpy.float64). Each operation was executed $N = 10$ times. The table below shows the mean execution time $\mu$ and standard deviation $\sigma$ across those runs, formatted as $\mu \pm \sigma$. All timings are reported in seconds.
+
 
 | Operation \\ $n$ | 10 | 50 | 100 | 500 | 1000 | 5000 | 10000 |
 |------------------|-----|------|-------|--------|---------|---------|----------|
