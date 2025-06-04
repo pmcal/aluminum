@@ -135,18 +135,18 @@ def benchmark(size: int, dtype=np.float64, runs: int = 10):
     print(f"Runs: {runs}")
     a = np.random.rand(size, size).astype(dtype)
     b = np.random.rand(size, size).astype(dtype)
-    # benchmark_addition(a, b, runs)
-    # benchmark_multiplication(a, b, runs)
-    # benchmark_inversion(a, runs)
-    # benchmark_lu_decomposition(a, runs)
-    # benchmark_cholesky(a, runs)
-    # benchmark_qr(a, runs)
-    # benchmark_schur(a, runs)
+    benchmark_addition(a, b, runs)
+    benchmark_multiplication(a, b, runs)
+    benchmark_inversion(a, runs)
+    benchmark_lu_decomposition(a, runs)
+    benchmark_cholesky(a, runs)
+    benchmark_qr(a, runs)
+    benchmark_schur(a, runs)
     benchmark_svd(a, runs)
 
 
 def main():
-    # sizes = [10, 50, 100, 500, 1000, 5000, 10000]
+    sizes = [10, 50, 100, 500, 1000, 5000, 10000]
     sizes = [10000]
     for size in sizes:
         benchmark(size)
