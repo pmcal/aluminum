@@ -27,7 +27,7 @@ impl Mat {
         }
     }
 
-    fn mul(self, rhs: &Mat) -> Mat {
+    fn multiply_naive(self, rhs: &Mat) -> Mat {
         assert_eq!(
             self.cols, rhs.rows,
             "Matrix dimensions do not align for multiplication"
