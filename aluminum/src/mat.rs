@@ -1,4 +1,5 @@
 use cblas::{dgemm, Layout, Transpose};
+use rayon::prelude::*;
 use std::ops::{Add, Mul};
 
 #[derive(Debug, Clone)]
@@ -26,72 +27,6 @@ impl Mat {
         }
     }
 
-    pub fn dot(&self, other: &Mat) -> Option<f64> {
-        // Row vector (1xN) dot column vector (Nx1)
-        if self.rows == 1 && other.cols == 1 && self.cols == other.rows {
-            Some(self.data.iter().zip(&other.data).map(|(a, b)| a * b).sum())
-        } else {
-            None
-        }
-    }
-
-    pub fn multiply_blas(&self, rhs: &Mat) -> Mat {
-        assert_eq!(
-            self.cols, rhs.rows,
-            "Matrix dimensions do not align for multiplication"
-        );
-
-        let (m, n, k) = (self.rows as i32, rhs.cols as i32, self.cols as i32);
-        let mut result = vec![0.0; self.rows * rhs.cols];
-
-        unsafe {
-            dgemm(
-                Layout::ColumnMajor,
-                Transpose::None,
-                Transpose::None,
-                m,
-                n,
-                k,
-                1.0,
-                &self.data,
-                m,
-                &rhs.data,
-                k,
-                0.0,
-                &mut result,
-                m,
-            );
-        }
-
-        Mat::new(self.rows, rhs.cols, result)
-    }
-}
-
-impl Add for &Mat {
-    type Output = Mat;
-    fn add(self, rhs: &Mat) -> Mat {
-        assert_eq!(
-            self.rows, rhs.rows,
-            "Matrix row dimensions must match for addition"
-        );
-        assert_eq!(
-            self.cols, rhs.cols,
-            "Matrix col dimensions must match for addition"
-        );
-
-        let data = self
-            .data
-            .iter()
-            .zip(&rhs.data)
-            .map(|(a, b)| a + b)
-            .collect();
-
-        Mat::new(self.rows, self.cols, data)
-    }
-}
-
-impl Mul for &Mat {
-    type Output = Mat;
     fn mul(self, rhs: &Mat) -> Mat {
         assert_eq!(
             self.cols, rhs.rows,
@@ -111,5 +46,59 @@ impl Mul for &Mat {
         }
 
         Mat::new(self.rows, rhs.cols, data)
+    }
+}
+
+impl Add for &Mat {
+    type Output = Mat;
+    fn add(self, rhs: &Mat) -> Mat {
+        assert_eq!(
+            self.rows, rhs.rows,
+            "Matrix row dimensions must match for addition"
+        );
+        assert_eq!(
+            self.cols, rhs.cols,
+            "Matrix col dimensions must match for addition"
+        );
+
+        let data: Vec<f64> = self
+            .data
+            .par_iter()
+            .zip(&rhs.data)
+            .map(|(a, b)| a + b)
+            .collect();
+
+        Mat::new(self.rows, self.cols, data)
+    }
+}
+
+impl Mul for &Mat {
+    type Output = Mat;
+    fn mul(self, rhs: &Mat) -> Mat {
+        assert_eq!(
+            self.cols, rhs.rows,
+            "Matrix dimensions do not align for multiplication"
+        );
+        let (m, n, k) = (self.rows as i32, rhs.cols as i32, self.cols as i32);
+        let mut result = vec![0.0; self.rows * rhs.cols];
+        unsafe {
+            dgemm(
+                Layout::ColumnMajor,
+                Transpose::None,
+                Transpose::None,
+                m,
+                n,
+                k,
+                1.0,
+                &self.data,
+                m,
+                &rhs.data,
+                k,
+                0.0,
+                &mut result,
+                m,
+            );
+        }
+        Mat::new(self.rows, rhs.cols, result)
     }
 }
