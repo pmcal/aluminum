@@ -7,7 +7,7 @@ pub fn run_faer_benchmarks(size: usize, runs: usize) {
     let a = Mat::<f64>::from_fn(size, size, |_, _| rng.r#gen());
     let b = Mat::<f64>::from_fn(size, size, |_, _| rng.r#gen());
     println!("\n[faer] Benchmarking for {}x{} matrices:", size, size);
-    benchmark_addition(&a, &b, runs);
+    // benchmark_addition(&a, &b, runs);
     benchmark_multiplication(&a, &b, runs);
     // benchmark_lu(&a, runs);
     // benchmark_qr(&a, runs);

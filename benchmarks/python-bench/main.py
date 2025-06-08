@@ -147,7 +147,6 @@ def benchmark(size: int, dtype=np.float64, runs: int = 10):
 
 def main():
     sizes = [10, 50, 100, 500, 1000, 5000, 10000]
-    sizes = [10000]
     for size in sizes:
         benchmark(size)
 

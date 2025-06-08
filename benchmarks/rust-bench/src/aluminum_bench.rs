@@ -7,8 +7,9 @@ pub fn run_aluminum_benchmarks(size: usize, runs: usize) {
     let a = Mat::new(size, size, (0..size * size).map(|_| rng.r#gen()).collect());
     let b = Mat::new(size, size, (0..size * size).map(|_| rng.r#gen()).collect());
     println!("\n[aluminum] Benchmarking for {}x{} matrices:", size, size);
-    benchmark_addition(&a, &b, runs);
-    benchmark_multiplication(&a, &b, runs);
+    // benchmark_addition(&a, &b, runs);
+    //benchmark_multiplication(&a, &b, runs);
+    benchmark_multiplication_blas(&a, &b, runs)
 }
 
 fn benchmark_addition(a: &Mat, b: &Mat, runs: usize) {
@@ -37,4 +38,21 @@ fn benchmark_multiplication(a: &Mat, b: &Mat, runs: usize) {
     let mean = times.iter().sum::<f64>() / times.len() as f64;
     let std = (times.iter().map(|t| (t - mean).powi(2)).sum::<f64>() / times.len() as f64).sqrt();
     println!("{:<28} {:.2e} s ± {:.2e} s", "Multiplication:", mean, std);
+}
+
+fn benchmark_multiplication_blas(a: &Mat, b: &Mat, runs: usize) {
+    let mut times = Vec::new();
+    for _ in 0..runs {
+        let start = Instant::now();
+        let _ = a.multiply_blas(b);
+        let elapsed = start.elapsed().as_secs_f64();
+        times.push(elapsed);
+    }
+    let mean = times.iter().copied().sum::<f64>() / times.len() as f64;
+    let stddev =
+        (times.iter().map(|t| (t - mean).powi(2)).sum::<f64>() / times.len() as f64).sqrt();
+    println!(
+        "{:<28} {:.2e} s ± {:.2e} s",
+        "BLAS multiplication: ", mean, stddev
+    );
 }

@@ -1,17 +1,9 @@
-pub mod mat;
-#[macro_use]
-mod macros;
-
-use crate::mat::Mat;
+mod mat;
+use mat::Mat;
 
 fn main() {
-    let rv = rvec![1, 2, 3, 4];
-    println!("Row vector:\n{}", rv);
-    let cv = cvec![1, 2, 3, 4];
-    println!("Column vector:\n{}", cv);
-    if let Some(dot) = rv.dot(&cv) {
-        println!("Dot product: {}", dot);
-    } else {
-        println!("Dot product not defined for these shapes");
-    }
+    let a = Mat::new(2, 2, vec![1.0, 3.0, 2.0, 4.0]);
+    let b = Mat::new(2, 2, vec![5.0, 7.0, 6.0, 8.0]);
+    let c = a.multiply_blas(&b);
+    println!("C = {:?}", c.data);
 }
