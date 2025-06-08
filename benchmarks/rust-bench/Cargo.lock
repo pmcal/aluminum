@@ -3,6 +3,10 @@
 version = 4
 
 [[package]]
+name = "aluminum"
+version = "0.1.0"
+
+[[package]]
 name = "approx"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -196,6 +200,7 @@ dependencies = [
 name = "faer-benchmark"
 version = "0.1.0"
 dependencies = [
+ "aluminum",
  "faer",
  "nalgebra",
  "rand 0.8.5",

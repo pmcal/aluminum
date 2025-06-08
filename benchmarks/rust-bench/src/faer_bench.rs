@@ -9,12 +9,12 @@ pub fn run_faer_benchmarks(size: usize, runs: usize) {
     println!("\n[faer] Benchmarking for {}x{} matrices:", size, size);
     benchmark_addition(&a, &b, runs);
     benchmark_multiplication(&a, &b, runs);
-    benchmark_lu(&a, runs);
-    benchmark_qr(&a, runs);
+    // benchmark_lu(&a, runs);
+    // benchmark_qr(&a, runs);
 
-    if size < 500 {
-        benchmark_svd(&a, runs);
-    }
+    // if size < 500 {
+    //     benchmark_svd(&a, runs);
+    // }
 }
 
 fn benchmark_addition(a: &Mat<f64>, b: &Mat<f64>, runs: usize) {

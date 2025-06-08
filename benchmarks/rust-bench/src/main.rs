@@ -1,3 +1,4 @@
+mod aluminum_bench;
 mod faer_bench;
 mod nalgebra_bench;
 
@@ -6,7 +7,8 @@ fn main() {
     let runs = 10;
 
     for &size in &sizes {
+        aluminum_bench::run_aluminum_benchmarks(size, runs);
         faer_bench::run_faer_benchmarks(size, runs);
-        nalgebra_bench::run_nalgebra_benchmarks(size, runs);
+        // nalgebra_bench::run_nalgebra_benchmarks(size, runs);
     }
 }
