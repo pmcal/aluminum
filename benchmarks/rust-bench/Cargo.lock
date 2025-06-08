@@ -220,16 +220,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "faer-benchmark"
-version = "0.1.0"
-dependencies = [
- "aluminum",
- "faer",
- "nalgebra",
- "rand 0.8.5",
-]
-
-[[package]]
 name = "faer-cholesky"
 version = "0.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -899,6 +889,16 @@ name = "reborrow"
 version = "0.5.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "03251193000f4bd3b042892be858ee50e8b3719f2b08e5833ac4353724632430"
+
+[[package]]
+name = "rust-bench"
+version = "0.1.0"
+dependencies = [
+ "aluminum",
+ "faer",
+ "nalgebra",
+ "rand 0.8.5",
+]
 
 [[package]]
 name = "rustc_version"

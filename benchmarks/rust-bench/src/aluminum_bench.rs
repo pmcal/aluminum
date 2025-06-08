@@ -14,10 +14,12 @@ pub fn run_aluminum_benchmarks(size: usize, runs: usize) {
 
 fn benchmark_addition(a: &Mat, b: &Mat, runs: usize) {
     let mut times = Vec::with_capacity(runs);
-    let mut result = a + b;
+    let mut _result = a + b;
     for _ in 0..runs {
         let start = Instant::now();
-        result = a + b;
+        {
+            _result = a + b;
+        }
         let duration = start.elapsed().as_secs_f64();
         times.push(duration);
     }
@@ -28,10 +30,12 @@ fn benchmark_addition(a: &Mat, b: &Mat, runs: usize) {
 
 fn benchmark_multiplication(a: &Mat, b: &Mat, runs: usize) {
     let mut times = Vec::with_capacity(runs);
-    let mut result = a * b;
+    let mut _result = a * b;
     for _ in 0..runs {
         let start = Instant::now();
-        result = a * b;
+        {
+            _result = a * b;
+        }
         let duration = start.elapsed().as_secs_f64();
         times.push(duration);
     }
