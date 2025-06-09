@@ -25,4 +25,8 @@ fn main() {
     // Multiplication with from_fn
     let ac_prod = &a * &c;
     println!("a * c =\n{}", ac_prod);
+
+    // Scalar multiplication
+    let scalar_prod = 2.5 * &a;
+    println!("a * 2.5 =\n{}", scalar_prod);
 }

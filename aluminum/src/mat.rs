@@ -101,6 +101,22 @@ impl Mul for &Mat {
     }
 }
 
+impl Mul<f64> for &Mat {
+    type Output = Mat;
+    fn mul(self, rhs: f64) -> Mat {
+        let data: Vec<f64> = self.data.par_iter().map(|a| a * rhs).collect();
+        Mat::new(self.rows, self.cols, data)
+    }
+}
+
+impl Mul<&Mat> for f64 {
+    type Output = Mat;
+    fn mul(self, rhs: &Mat) -> Mat {
+        let data: Vec<f64> = rhs.data.par_iter().map(|a| self * a).collect();
+        Mat::new(rhs.rows, rhs.cols, data)
+    }
+}
+
 impl fmt::Display for Mat {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Use the requested precision, or default to 3
