@@ -48,9 +48,12 @@ impl<T> Mat<T> {
     }
 }
 
-impl Add for &Mat<f64> {
-    type Output = Mat<f64>;
-    fn add(self, rhs: &Mat<f64>) -> Mat<f64> {
+impl<T> Add for &Mat<T>
+where
+    T: Add<Output = T> + Copy + Send + Sync,
+{
+    type Output = Mat<T>;
+    fn add(self, rhs: &Mat<T>) -> Mat<T> {
         assert_eq!(
             self.rows, rhs.rows,
             "Matrix row dimensions must match for addition"
@@ -59,14 +62,12 @@ impl Add for &Mat<f64> {
             self.cols, rhs.cols,
             "Matrix col dimensions must match for addition"
         );
-
-        let data: Vec<f64> = self
+        let data: Vec<T> = self
             .data
             .par_iter()
             .zip(&rhs.data)
-            .map(|(a, b)| a + b)
+            .map(|(&a, &b)| a + b)
             .collect();
-
         Mat::new(self.rows, self.cols, data)
     }
 }
