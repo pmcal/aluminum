@@ -1,16 +1,22 @@
 use cblas::{dgemm, Layout, Transpose};
 use rayon::prelude::*;
+use std::fmt;
 use std::ops::{Add, Mul};
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct Mat {
     pub rows: usize,
     pub cols: usize,
     pub data: Vec<f64>,
 }
 
+// === Mat constructors ===
 impl Mat {
     pub fn new(rows: usize, cols: usize, data: Vec<f64>) -> Self {
+        Self::from_vec(rows, cols, data)
+    }
+
+    pub fn from_vec(rows: usize, cols: usize, data: Vec<f64>) -> Self {
         assert_eq!(
             data.len(),
             rows * cols,
@@ -19,33 +25,25 @@ impl Mat {
         Mat { rows, cols, data }
     }
 
+    pub fn from_fn<F>(rows: usize, cols: usize, mut f: F) -> Self
+    where
+        F: FnMut(usize, usize) -> f64,
+    {
+        let mut data = Vec::with_capacity(rows * cols);
+        for i in 0..rows {
+            for j in 0..cols {
+                data.push(f(i, j));
+            }
+        }
+        Self::from_vec(rows, cols, data)
+    }
+
     pub fn get(&self, row: usize, col: usize) -> Option<f64> {
         if row < self.rows && col < self.cols {
             Some(self.data[row * self.cols + col])
         } else {
             None
         }
-    }
-
-    fn multiply_naive(self, rhs: &Mat) -> Mat {
-        assert_eq!(
-            self.cols, rhs.rows,
-            "Matrix dimensions do not align for multiplication"
-        );
-
-        let mut data = vec![0.0; self.rows * rhs.cols];
-
-        for i in 0..self.rows {
-            for j in 0..rhs.cols {
-                let mut sum = 0.0;
-                for k in 0..self.cols {
-                    sum += self.data[i * self.cols + k] * rhs.data[k * rhs.cols + j];
-                }
-                data[i * rhs.cols + j] = sum;
-            }
-        }
-
-        Mat::new(self.rows, rhs.cols, data)
     }
 }
 
@@ -100,5 +98,40 @@ impl Mul for &Mat {
             );
         }
         Mat::new(self.rows, rhs.cols, result)
+    }
+}
+
+impl fmt::Display for Mat {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // Use the requested precision, or default to 3
+        let precision = f.precision().unwrap_or(3);
+        for i in 0..self.rows {
+            for j in 0..self.cols {
+                let value = self.data[i * self.cols + j];
+                write!(f, "{:.*} ", precision, value)?;
+            }
+            writeln!(f)?;
+        }
+        Ok(())
+    }
+}
+
+impl std::fmt::Debug for Mat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let precision = f.precision().unwrap_or(3);
+        writeln!(f, "[")?;
+        for i in 0..self.rows {
+            let start = i * self.cols;
+            let end = start + self.cols;
+            write!(f, "  [")?;
+            for (j, value) in self.data[start..end].iter().enumerate() {
+                if j > 0 {
+                    write!(f, ", ")?;
+                }
+                write!(f, "{:.*}", precision, value)?;
+            }
+            writeln!(f, "],")?;
+        }
+        write!(f, "]")
     }
 }
