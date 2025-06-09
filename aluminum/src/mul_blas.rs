@@ -5,12 +5,10 @@ pub trait BlasGemm {
         m: i32,
         n: i32,
         k: i32,
-        alpha: Self,
         a: &[Self],
         lda: i32,
         b: &[Self],
         ldb: i32,
-        beta: Self,
         c: &mut [Self],
         ldc: i32,
     ) where
@@ -22,12 +20,10 @@ impl BlasGemm for f64 {
         m: i32,
         n: i32,
         k: i32,
-        alpha: f64,
         a: &[f64],
         lda: i32,
         b: &[f64],
         ldb: i32,
-        beta: f64,
         c: &mut [f64],
         ldc: i32,
     ) {
@@ -39,12 +35,12 @@ impl BlasGemm for f64 {
                 m,
                 n,
                 k,
-                alpha,
+                1.0, // alpha hardcoded
                 a,
                 lda,
                 b,
                 ldb,
-                beta,
+                0.0, // beta hardcoded
                 c,
                 ldc,
             );
@@ -57,12 +53,10 @@ impl BlasGemm for f32 {
         m: i32,
         n: i32,
         k: i32,
-        alpha: f32,
         a: &[f32],
         lda: i32,
         b: &[f32],
         ldb: i32,
-        beta: f32,
         c: &mut [f32],
         ldc: i32,
     ) {
@@ -74,12 +68,12 @@ impl BlasGemm for f32 {
                 m,
                 n,
                 k,
-                alpha,
+                1.0, // alpha hardcoded
                 a,
                 lda,
                 b,
                 ldb,
-                beta,
+                0.0, // beta hardcoded
                 c,
                 ldc,
             );

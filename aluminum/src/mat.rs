@@ -1,3 +1,4 @@
+use num_traits::Zero;
 use rayon::prelude::*;
 use std::fmt;
 use std::ops::{Add, Mul};
@@ -73,28 +74,19 @@ where
     }
 }
 
-impl Mul for &Mat<f64> {
-    type Output = Mat<f64>;
-    fn mul(self, rhs: &Mat<f64>) -> Mat<f64> {
+impl<T> Mul for &Mat<T>
+where
+    T: BlasGemm + Copy + Zero,
+{
+    type Output = Mat<T>;
+    fn mul(self, rhs: &Mat<T>) -> Mat<T> {
         assert_eq!(
             self.cols, rhs.rows,
             "Matrix dimensions do not align for multiplication"
         );
         let (m, n, k) = (self.rows as i32, rhs.cols as i32, self.cols as i32);
-        let mut result = vec![0.0; self.rows * rhs.cols];
-        <f64 as BlasGemm>::gemm(
-            m,
-            n,
-            k,
-            1.0,
-            &self.data,
-            m,
-            &rhs.data,
-            k,
-            0.0,
-            &mut result,
-            m,
-        );
+        let mut result = vec![T::zero(); self.rows * rhs.cols];
+        <T as BlasGemm>::gemm(m, n, k, &self.data, m, &rhs.data, k, &mut result, m);
         Mat::new(self.rows, rhs.cols, result)
     }
 }
@@ -117,13 +109,20 @@ impl Mul<&Mat<f64>> for f64 {
 }
 
 // === Display trait ===
-impl fmt::Display for Mat<f64> {
+impl<T> fmt::Display for Mat<T>
+where
+    T: fmt::Display,
+{
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let precision = f.precision().unwrap_or(3);
+        let precision = f.precision();
         for i in 0..self.rows {
             for j in 0..self.cols {
-                let value = self.data[i * self.cols + j];
-                write!(f, "{:.*} ", precision, value)?;
+                let value = &self.data[i * self.cols + j];
+                if let Some(p) = precision {
+                    write!(f, "{:.*} ", p, value)?;
+                } else {
+                    write!(f, "{} ", value)?;
+                }
             }
             writeln!(f)?;
         }
@@ -132,9 +131,12 @@ impl fmt::Display for Mat<f64> {
 }
 
 // === Debug trait ===
-impl std::fmt::Debug for Mat<f64> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let precision = f.precision().unwrap_or(3);
+impl<T> fmt::Debug for Mat<T>
+where
+    T: fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let precision = f.precision();
         writeln!(f, "[")?;
         for i in 0..self.rows {
             let start = i * self.cols;
@@ -144,7 +146,11 @@ impl std::fmt::Debug for Mat<f64> {
                 if j > 0 {
                     write!(f, ", ")?;
                 }
-                write!(f, "{:.*}", precision, value)?;
+                if let Some(p) = precision {
+                    write!(f, "{:.*?}", p, value)?;
+                } else {
+                    write!(f, "{:?}", value)?;
+                }
             }
             writeln!(f, "],")?;
         }

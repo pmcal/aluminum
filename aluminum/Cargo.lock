@@ -8,6 +8,7 @@ version = "0.1.0"
 dependencies = [
  "cblas",
  "num-complex",
+ "num-traits",
  "num_cpus",
  "rayon",
 ]
