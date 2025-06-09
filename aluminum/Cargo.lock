@@ -7,6 +7,7 @@ name = "aluminum"
 version = "0.1.0"
 dependencies = [
  "cblas",
+ "num-complex",
  "num_cpus",
  "rayon",
 ]

@@ -1,2 +1,3 @@
+mod macros;
 pub mod mat;
-pub mod macros;
+pub mod mul_blas;

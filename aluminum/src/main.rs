@@ -1,5 +1,4 @@
-mod mat;
-use mat::Mat;
+use aluminum::mat::Mat;
 
 fn main() {
     // Initialize using new
