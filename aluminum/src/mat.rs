@@ -48,6 +48,7 @@ impl<T> Mat<T> {
     }
 }
 
+// === Addition ===
 impl<T> Add for &Mat<T>
 where
     T: Add<Output = T> + Copy + Send + Sync,
@@ -98,6 +99,7 @@ impl Mul for &Mat<f64> {
     }
 }
 
+// === Scalar multiplication (scalar before and after matrix) ===
 impl Mul<f64> for &Mat<f64> {
     type Output = Mat<f64>;
     fn mul(self, rhs: f64) -> Mat<f64> {
@@ -114,6 +116,7 @@ impl Mul<&Mat<f64>> for f64 {
     }
 }
 
+// === Display trait ===
 impl fmt::Display for Mat<f64> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let precision = f.precision().unwrap_or(3);
@@ -128,6 +131,7 @@ impl fmt::Display for Mat<f64> {
     }
 }
 
+// === Debug trait ===
 impl std::fmt::Debug for Mat<f64> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let precision = f.precision().unwrap_or(3);
